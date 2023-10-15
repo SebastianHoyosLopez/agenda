@@ -1,5 +1,13 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { ROLES } from 'src/constants/roles';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+import { ACCESS_LEVEL, ROLES } from 'src/constants/roles';
+import { UsersEntity } from '../entities/users.entity';
+import { ReservationsEntity } from 'src/reservations/entities/reservations.entity';
 
 export class UserDTO {
   @IsNotEmpty()
@@ -28,27 +36,41 @@ export class UserDTO {
 }
 
 export class UserUpdateDTO {
-    @IsOptional()
-    @IsString()
-    firstName: string;
-  
-    @IsOptional()
-    @IsString()
-    lastName: string;
-  
-    @IsOptional()
-    @IsString()
-    email: string;
-  
-    @IsOptional()
-    @IsString()
-    username: string;
-  
-    @IsOptional()
-    @IsString()
-    password: string;
-  
-    @IsOptional()
-    @IsEnum(ROLES)
-    role: ROLES;
-  }
+  @IsOptional()
+  @IsString()
+  firstName: string;
+
+  @IsOptional()
+  @IsString()
+  lastName: string;
+
+  @IsOptional()
+  @IsString()
+  email: string;
+
+  @IsOptional()
+  @IsString()
+  username: string;
+
+  @IsOptional()
+  @IsString()
+  password: string;
+
+  @IsOptional()
+  @IsEnum(ROLES)
+  role: ROLES;
+}
+
+export class UserToReservationDTO {
+  @IsNotEmpty()
+  @IsUUID()
+  user: UsersEntity;
+
+  @IsNotEmpty()
+  @IsUUID()
+  reservation: ReservationsEntity;
+
+  @IsNotEmpty()
+  @IsEnum(ACCESS_LEVEL)
+  accessLevel: ACCESS_LEVEL;
+}

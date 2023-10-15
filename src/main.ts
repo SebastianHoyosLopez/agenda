@@ -15,10 +15,10 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transformOptions: {
-        enableImplicitConversion: true
-      }
-    })
-  )
+        enableImplicitConversion: true,
+      },
+    }),
+  );
 
   app.enableCors(CORS);
 

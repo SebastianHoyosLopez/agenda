@@ -13,8 +13,8 @@ export class UsersEntity extends BaseEntity implements IUser {
   @Column()
   lastName: string;
 
-  @Column()
-  age: number;
+  // @Column()
+  // age: number;
 
   @Column({ unique: true })
   email: string;

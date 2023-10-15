@@ -1,17 +1,25 @@
+import { BaseEntity } from '../../config/base.entity';
 import { IReservation } from '../../interfaces/reservations.interface';
 import { UsersReservationsEntity } from '../../users/entities/usersReservations.entity';
-import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity({ name: 'reservations' })
 export class ReservationsEntity extends BaseEntity implements IReservation {
-  @PrimaryColumn()
-  date: Date;
-  @Column()
-  description: string;
-  @Column()
-  hour: string;
   @Column()
   place: string;
-  @OneToMany(() => UsersReservationsEntity, (usersReservations) =>  usersReservations.reservation)  
-  usersIncludes: UsersReservationsEntity[]
+
+  @Column()
+  date: string;
+
+  @Column()
+  description: string;
+
+  @Column()
+  hour: string;
+
+  @OneToMany(
+    () => UsersReservationsEntity,
+    (usersReservations) => usersReservations.reservation,
+  )
+  usersIncludes: UsersReservationsEntity[];
 }

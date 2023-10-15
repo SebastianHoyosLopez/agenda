@@ -1,12 +1,49 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { UsersService } from '../services/users.service';
+import { UserDTO, UserToReservationDTO, UserUpdateDTO } from '../dto/user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  // @Get()
-  // getHello(): string {
-  //   return this.usersService.findUsers();
-  // }
+  @Post('register')
+  public async registersUser(@Body() body: UserDTO) {
+    return await this.usersService.createUser(body);
+  }
+
+  @Get('all')
+  public async findAllUsers() {
+    return await this.usersService.findUsers();
+  }
+
+  @Get(':id')
+  public async findUserById(@Param('id') id: string) {
+    return await this.usersService.findUsersById(id);
+  }
+
+  @Post('add-to-reservation')
+  public async addToReservation(@Body() body: UserToReservationDTO) {
+    return await this.usersService.relationToReservation(body);
+  }
+
+  @Put('edit/:id')
+  public async updateUser(
+    @Param('id') id: string,
+    @Body() body: UserUpdateDTO,
+  ) {
+    return await this.usersService.updateUser(body, id);
+  }
+
+  @Delete('delete/:id')
+  public async deleteUser(@Param('id') id: string) {
+    return await this.usersService.deleteUser(id);
+  }
 }

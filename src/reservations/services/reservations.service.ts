@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ReservationsEntity } from '../entities/reservations.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { ReservationDTO, ReservationUpdateDTO } from '../dto/reservation.dto';
+import { ErrorManager } from 'src/utils/error.manager';
 
 @Injectable()
 export class ReservationsService {
@@ -17,28 +18,43 @@ export class ReservationsService {
     try {
       return await this.reservationRepository.save(body);
     } catch (error) {
-      throw new Error(error);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 
-  public async findReservations(
-    body: ReservationDTO,
-  ): Promise<ReservationsEntity[]> {
+  public async findReservations(): Promise<ReservationsEntity[]> {
     try {
-      return await this.reservationRepository.find();
+      const reservations: ReservationsEntity[] =
+        await this.reservationRepository.find();
+      if (reservations.length === 0) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'No se encontro resultados',
+        });
+      }
+      return reservations; 
     } catch (error) {
-      throw new Error(error);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 
   public async findReservationsById(id: string): Promise<ReservationsEntity> {
     try {
-      return await this.reservationRepository
+      const reservation: ReservationsEntity = await this.reservationRepository
         .createQueryBuilder('reservation')
         .where({ id })
+        .leftJoinAndSelect('reservation.usersIncludes', 'usersIncludes')
+        .leftJoinAndSelect('usersIncludes.user', 'user')
         .getOne();
+      if (!reservation) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'No se encontro resultados',
+        });
+      }
+      return reservation;
     } catch (error) {
-      throw new Error(error);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 
@@ -54,7 +70,7 @@ export class ReservationsService {
       if (reservation.affected === 0) return undefined;
       return reservation;
     } catch (error) {
-      throw new Error(error);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 
@@ -64,10 +80,15 @@ export class ReservationsService {
     try {
       const reservation: DeleteResult =
         await this.reservationRepository.delete(id);
-      if (reservation.affected === 0) return undefined;
+      if (reservation.affected === 0) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'No se pudo borrar',
+        });
+      }
       return reservation;
     } catch (error) {
-      throw new Error(error);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 }

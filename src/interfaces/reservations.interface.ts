@@ -1,5 +1,5 @@
 export interface IReservation {
-  date: Date;
+  date: string;
   place: string;
   hour: string;
   description: string;
