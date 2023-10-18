@@ -12,9 +12,11 @@ import { UsersService } from '../services/users.service';
 import { UserDTO, UserToReservationDTO, UserUpdateDTO } from '../dto/user.dto';
 import { PublicAccess } from 'src/auth/decorators/public.decorator';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('users')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -23,14 +25,15 @@ export class UsersController {
     return await this.usersService.createUser(body);
   }
 
+  @Roles('ADMIN')
   @Get('all')
   public async findAllUsers() {
     return await this.usersService.findUsers();
   }
 
   @PublicAccess()
-  @Get(':id')
-  public async findUserById(@Param('id') id: string) {
+  @Get(':userId')
+  public async findUserById(@Param('userId') id: string) {
     return await this.usersService.findUsersById(id);
   }
 
@@ -39,16 +42,16 @@ export class UsersController {
     return await this.usersService.relationToReservation(body);
   }
 
-  @Put('edit/:id')
+  @Put('edit/:userId')
   public async updateUser(
-    @Param('id') id: string,
+    @Param('userId') id: string,
     @Body() body: UserUpdateDTO,
   ) {
     return await this.usersService.updateUser(body, id);
   }
 
-  @Delete('delete/:id')
-  public async deleteUser(@Param('id') id: string) {
+  @Delete('delete/:userId')
+  public async deleteUser(@Param('userId') id: string) {
     return await this.usersService.deleteUser(id);
   }
 }
