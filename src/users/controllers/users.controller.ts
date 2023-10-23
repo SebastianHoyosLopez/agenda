@@ -21,11 +21,12 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Post('register')
+  @PublicAccess()
   public async registersUser(@Body() body: UserDTO) {
     return await this.usersService.createUser(body);
   }
 
-  @Roles('ADMIN')
+  @PublicAccess()
   @Get('all')
   public async findAllUsers() {
     return await this.usersService.findUsers();
@@ -33,8 +34,8 @@ export class UsersController {
 
   @PublicAccess()
   @Get(':userId')
-  public async findUserById(@Param('userId') id: string) {
-    return await this.usersService.findUsersById(id);
+  public async findUserById(@Param('userId') userId: string) {
+    return await this.usersService.findUsersById(userId);
   }
 
   @Post('add-to-reservation')

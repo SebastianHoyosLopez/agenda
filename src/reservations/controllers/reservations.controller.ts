@@ -11,21 +11,27 @@ import {
 } from '@nestjs/common';
 import { ReservationsService } from '../services/reservations.service';
 import { ReservationDTO, ReservationUpdateDTO } from '../dto/reservation.dto';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { AccessLevelGuard } from 'src/auth/guards/access-level.guard';
-import { AccessLevel } from 'src/auth/decorators/access-level.decorator';
+import { AuthGuard } from '../../auth/guards/auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { AccessLevelGuard } from '../../auth/guards/access-level.guard';
+import { AccessLevel } from '../../auth/decorators/access-level.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { PublicAccess } from '../../auth/decorators/public.decorator';
 
 @Controller('reservations')
 @UseGuards(AuthGuard, RolesGuard, AccessLevelGuard)
 export class ReservationsController {
   constructor(private reservationsService: ReservationsService) {}
 
-  @Post('create')
-  public async createReservation(@Body() body: ReservationDTO) {
-    return await this.reservationsService.createReservation(body);
+  @Roles('CREATOR')
+  @Post('create/userOwner/:userId')
+  public async createReservation(
+    @Body() body: ReservationDTO,
+    @Param('userId') userId: string,
+  ) {
+    return await this.reservationsService.createReservation(body, userId);
   }
-
+  @PublicAccess()
   @Get('all')
   public async findAllReservations() {
     return await this.reservationsService.findReservations();
@@ -39,16 +45,19 @@ export class ReservationsController {
   @AccessLevel(50)
   @Put('edit/:reservationId')
   public async updateReservation(
-    @Param('reservationId', new ParseUUIDPipe()) id: string,
+    @Param('reservationId', new ParseUUIDPipe()) reservationId: string,
     @Body() body: ReservationUpdateDTO,
   ) {
-    return await this.reservationsService.updateReservation(body, id);
+    return await this.reservationsService.updateReservation(
+      body,
+      reservationId,
+    );
   }
 
   @Delete('delete/:reservationId')
   public async deleteUser(
-    @Param('reservationId', new ParseUUIDPipe()) id: string,
+    @Param('reservationId', new ParseUUIDPipe()) reservationId: string,
   ) {
-    return await this.reservationsService.deleteReservation(id);
+    return await this.reservationsService.deleteReservation(reservationId);
   }
 }

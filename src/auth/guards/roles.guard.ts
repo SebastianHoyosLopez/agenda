@@ -17,7 +17,6 @@ export class RolesGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    
     const isPublic = this.reflector.get<boolean>(
       PUBLIC_KEY,
       context.getHandler(),
@@ -32,7 +31,10 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const admin = this.reflector.get<string>(ADMIN_KEY, context.getHandler());
+    const admin = this.reflector.get<string>(
+      ADMIN_KEY, 
+      context.getHandler()
+    );
 
     const req = context.switchToHttp().getRequest<Request>();
 
@@ -50,7 +52,7 @@ export class RolesGuard implements CanActivate {
       }
     }
 
-    if (roleUser === ROLES.ADMIN) return true;
+    if (roleUser === ROLES.ADMIN || roleUser === ROLES.CREATOR) return true;
 
     const isAuth = roles.some((role) => role === roleUser);
 

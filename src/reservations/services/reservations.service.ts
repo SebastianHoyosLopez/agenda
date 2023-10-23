@@ -4,19 +4,32 @@ import { ReservationsEntity } from '../entities/reservations.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { ReservationDTO, ReservationUpdateDTO } from '../dto/reservation.dto';
 import { ErrorManager } from 'src/utils/error.manager';
+import { UsersReservationsEntity } from 'src/users/entities/usersReservations.entity';
+import { UsersService } from 'src/users/services/users.service';
+import { ACCESS_LEVEL } from 'src/constants/roles';
 
 @Injectable()
 export class ReservationsService {
   constructor(
     @InjectRepository(ReservationsEntity)
     private readonly reservationRepository: Repository<ReservationsEntity>,
+    @InjectRepository(UsersReservationsEntity)
+    private readonly userReservationRepository: Repository<UsersReservationsEntity>,
+    private readonly usersService: UsersService,
   ) {}
 
   public async createReservation(
     body: ReservationDTO,
-  ): Promise<ReservationsEntity> {
+    userId: string,
+  ): Promise<any> {
     try {
-      return await this.reservationRepository.save(body);
+      const user = await this.usersService.findUsersById(userId);
+      const reservation = await this.reservationRepository.save(body);
+      return await this.userReservationRepository.save({
+        accessLevel: ACCESS_LEVEL.OWNER,
+        user: user,
+        reservation,
+      });
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
@@ -25,14 +38,16 @@ export class ReservationsService {
   public async findReservations(): Promise<ReservationsEntity[]> {
     try {
       const reservations: ReservationsEntity[] =
-        await this.reservationRepository.find();
+        await this.reservationRepository.find({
+          relations: ['usersIncludes.user', 'earrings'],
+        });
       if (reservations.length === 0) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',
           message: 'No se encontro resultados',
         });
       }
-      return reservations; 
+      return reservations;
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }

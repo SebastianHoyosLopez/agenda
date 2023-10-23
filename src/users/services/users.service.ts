@@ -29,7 +29,9 @@ export class UsersService {
 
   public async findUsers(): Promise<UsersEntity[]> {
     try {
-      const users: UsersEntity[] = await this.userRepository.find();
+      const users: UsersEntity[] = await this.userRepository.find({
+        relations: ['reservationsIncludes.reservation'],
+      });
       if (users.length === 0) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',

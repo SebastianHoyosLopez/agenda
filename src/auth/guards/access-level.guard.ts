@@ -63,7 +63,7 @@ export class AccessLevelGuard implements CanActivate {
       }
     }
 
-    if (roleUser === ROLES.ADMIN) return true;
+    if (roleUser === ROLES.ADMIN || roleUser === ROLES.CREATOR) return true;
 
     const user = await this.userService.findUsersById(idUser);
 
@@ -74,6 +74,7 @@ export class AccessLevelGuard implements CanActivate {
     if (userExistInReservation === undefined) {
       throw new UnauthorizedException('No tienes los suficientes permisos.');
     }
+    
 
     if (accessLevel !== userExistInReservation.accessLevel) {
       throw new UnauthorizedException('No tienes el nivel acceso, solicitalo.');
