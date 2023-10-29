@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { CORS } from './constants';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,14 +20,22 @@ async function bootstrap() {
       },
     }),
   );
-// config exclude
+  // config exclude
   const reflector = app.get(Reflector);
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
 
   app.enableCors(CORS);
 
-  const configService = app.get(ConfigService);
+  const config = new DocumentBuilder()
+    .setTitle('Reservas Agenda API')
+    .setDescription('app para gestionar las reservas en una agenda')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
 
+  const configService = app.get(ConfigService);
+ 
   const port = configService.get('PORT');
 
   await app.listen(port);

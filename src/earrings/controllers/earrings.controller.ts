@@ -5,13 +5,18 @@ import { AuthGuard } from '../../auth/guards/auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { AccessLevelGuard } from '../../auth/guards/access-level.guard';
 import { AccessLevel } from '../../auth/decorators/access-level.decorator';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Earrings')
 @Controller('earrings')
 @UseGuards(AuthGuard, RolesGuard, AccessLevelGuard)
 export class EarringsController {
   constructor(private readonly earringsService: EarringsService) {}
 
-//   @AccessLevel('')
+  @ApiParam({
+    name: 'reservationId',
+  })
+  @AccessLevel('DEVELOPER')
   @Post('create/:reservationId')
   public async createEarring(
     @Body() body: EarringsDTO,

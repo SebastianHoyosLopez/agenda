@@ -16,7 +16,7 @@ export class UsersService {
 
     @InjectRepository(UsersReservationsEntity)
     private readonly userReservationRepository: Repository<UsersReservationsEntity>,
-  ) {}
+  ) { }
 
   public async createUser(body: UserDTO): Promise<UsersEntity> {
     try {
@@ -39,6 +39,36 @@ export class UsersService {
         });
       }
       return users;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
+
+  public async findRelations(): Promise<UsersReservationsEntity[]> {
+    try {
+      const relations: UsersReservationsEntity[] = await this.userReservationRepository.find()
+      if (relations.length === 0) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'No se encontro resultados',
+        });
+      }
+      return relations;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
+
+  public async deleteRelation(relationId: string): Promise<DeleteResult | undefined> {
+    try {
+      const relation: DeleteResult = await this.userReservationRepository.delete(relationId);
+      if (relation.affected === 0) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'No se pudo borrar',
+        });
+      }
+      return relation;
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }

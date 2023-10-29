@@ -27,8 +27,8 @@ export class UsersEntity extends BaseEntity implements IUser {
   role: ROLES;
 
   @OneToMany(
-    () =>  UsersReservationsEntity, 
-    (usersReservation) => usersReservation.user
+    () => UsersReservationsEntity,
+    (usersReservation) => usersReservation.user,
   )
   reservationsIncludes: UsersReservationsEntity[];
 }

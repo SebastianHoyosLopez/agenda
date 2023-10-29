@@ -6,6 +6,7 @@ import { DataSourceConfig } from './config/data.source';
 import { ReservationsModule } from './reservations/reservations.module';
 import { AuthModule } from './auth/auth.module';
 import { EarringsModule } from './earrings/earrings.module';
+// import { DevtoolsModule } from '@nestjs/devtools-integration';
 
 @Module({
   imports: [

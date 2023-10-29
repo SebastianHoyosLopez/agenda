@@ -3,6 +3,7 @@ import { BaseEntity } from '../../config/base.entity';
 import { ACCESS_LEVEL } from '../../constants/roles';
 import { UsersEntity } from '../../users/entities/users.entity';
 import { ReservationsEntity } from '../../reservations/entities/reservations.entity';
+import { IsOptional } from 'class-validator';
 
 @Entity({ name: 'users_reservation' })
 export class UsersReservationsEntity extends BaseEntity {
@@ -16,5 +17,6 @@ export class UsersReservationsEntity extends BaseEntity {
     () => ReservationsEntity,
     (reservation) => reservation.usersIncludes,
   )
-  reservation: ReservationsEntity; 
+  @IsOptional()
+  reservation: ReservationsEntity;
 }

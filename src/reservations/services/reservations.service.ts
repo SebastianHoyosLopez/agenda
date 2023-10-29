@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReservationsEntity } from '../entities/reservations.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -16,7 +16,7 @@ export class ReservationsService {
     @InjectRepository(UsersReservationsEntity)
     private readonly userReservationRepository: Repository<UsersReservationsEntity>,
     private readonly usersService: UsersService,
-  ) {}
+  ) { }
 
   public async createReservation(
     body: ReservationDTO,
@@ -60,6 +60,7 @@ export class ReservationsService {
         .where({ id })
         .leftJoinAndSelect('reservation.usersIncludes', 'usersIncludes')
         .leftJoinAndSelect('usersIncludes.user', 'user')
+        .leftJoinAndSelect('reservation.earrings', 'earrings')
         .getOne();
       if (!reservation) {
         throw new ErrorManager({
@@ -90,11 +91,15 @@ export class ReservationsService {
   }
 
   public async deleteReservation(
-    id: string,
+    reservationId: string,
+    relationId: string
   ): Promise<DeleteResult | undefined> {
     try {
+      await this.usersService.deleteRelation(relationId)
+
       const reservation: DeleteResult =
-        await this.reservationRepository.delete(id);
+        await this.reservationRepository.delete(reservationId);
+
       if (reservation.affected === 0) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',

@@ -6,14 +6,13 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { Observable } from 'rxjs';
 import {
   ACCESS_LEVEL_KEY,
   ADMIN_KEY,
   PUBLIC_KEY,
   ROLES_KEY,
 } from 'src/constants/key-decorators';
-import { ROLES } from 'src/constants/roles';
+import { ROLES, ACCESS_LEVEL } from 'src/constants/roles';
 import { UsersService } from 'src/users/services/users.service';
 
 @Injectable()
@@ -38,7 +37,7 @@ export class AccessLevelGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const accessLevel = this.reflector.get<number>(
+    const accessLevel = this.reflector.get<keyof typeof ACCESS_LEVEL>(
       ACCESS_LEVEL_KEY,
       context.getHandler(),
     );
@@ -74,9 +73,8 @@ export class AccessLevelGuard implements CanActivate {
     if (userExistInReservation === undefined) {
       throw new UnauthorizedException('No tienes los suficientes permisos.');
     }
-    
 
-    if (accessLevel !== userExistInReservation.accessLevel) {
+    if (ACCESS_LEVEL[accessLevel] > userExistInReservation.accessLevel) {
       throw new UnauthorizedException('No tienes el nivel acceso, solicitalo.');
     }
 

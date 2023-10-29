@@ -17,12 +17,17 @@ import { AccessLevelGuard } from '../../auth/guards/access-level.guard';
 import { AccessLevel } from '../../auth/decorators/access-level.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { PublicAccess } from '../../auth/decorators/public.decorator';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Reservations')
 @Controller('reservations')
 @UseGuards(AuthGuard, RolesGuard, AccessLevelGuard)
 export class ReservationsController {
   constructor(private reservationsService: ReservationsService) {}
 
+  @ApiParam({
+    name: 'userId',
+  })
   @Roles('CREATOR')
   @Post('create/userOwner/:userId')
   public async createReservation(
@@ -31,18 +36,25 @@ export class ReservationsController {
   ) {
     return await this.reservationsService.createReservation(body, userId);
   }
+
   @PublicAccess()
   @Get('all')
   public async findAllReservations() {
     return await this.reservationsService.findReservations();
   }
 
+  @ApiParam({
+    name: 'reservationId',
+  })
   @Get(':reservationId')
   public async findReservationById(@Param('reservationId') id: string) {
     return await this.reservationsService.findReservationsById(id);
   }
 
-  @AccessLevel(50)
+  @ApiParam({
+    name: 'reservationId',
+  })
+  @AccessLevel('OWNER')
   @Put('edit/:reservationId')
   public async updateReservation(
     @Param('reservationId', new ParseUUIDPipe()) reservationId: string,
@@ -54,10 +66,14 @@ export class ReservationsController {
     );
   }
 
-  @Delete('delete/:reservationId')
+  @ApiParam({
+    name: 'reservationId',
+  })
+  @Delete('delete/:reservationId/:relationId')
   public async deleteUser(
     @Param('reservationId', new ParseUUIDPipe()) reservationId: string,
+    @Param('relationId', new ParseUUIDPipe()) relationId: string
   ) {
-    return await this.reservationsService.deleteReservation(reservationId);
+    return await this.reservationsService.deleteReservation(reservationId, relationId);
   }
 }
