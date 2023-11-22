@@ -31,10 +31,7 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const admin = this.reflector.get<string>(
-      ADMIN_KEY, 
-      context.getHandler()
-    );
+    const admin = this.reflector.get<string>(ADMIN_KEY, context.getHandler());
 
     const req = context.switchToHttp().getRequest<Request>();
 

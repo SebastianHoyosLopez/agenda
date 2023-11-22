@@ -16,7 +16,7 @@ export class UsersService {
 
     @InjectRepository(UsersReservationsEntity)
     private readonly userReservationRepository: Repository<UsersReservationsEntity>,
-  ) { }
+  ) {}
 
   public async createUser(body: UserDTO): Promise<UsersEntity> {
     try {
@@ -46,7 +46,8 @@ export class UsersService {
 
   public async findRelations(): Promise<UsersReservationsEntity[]> {
     try {
-      const relations: UsersReservationsEntity[] = await this.userReservationRepository.find()
+      const relations: UsersReservationsEntity[] =
+        await this.userReservationRepository.find();
       if (relations.length === 0) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',
@@ -59,9 +60,12 @@ export class UsersService {
     }
   }
 
-  public async deleteRelation(relationId: string): Promise<DeleteResult | undefined> {
+  public async deleteRelation(
+    relationId: string,
+  ): Promise<DeleteResult | undefined> {
     try {
-      const relation: DeleteResult = await this.userReservationRepository.delete(relationId);
+      const relation: DeleteResult =
+        await this.userReservationRepository.delete(relationId);
       if (relation.affected === 0) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',
@@ -85,7 +89,7 @@ export class UsersService {
       if (!user) {
         throw new ErrorManager({
           type: 'BAD_REQUEST',
-          message: 'No se encontro resultados',
+          message: 'No se encontro usuario registrado',
         });
       }
       return user;

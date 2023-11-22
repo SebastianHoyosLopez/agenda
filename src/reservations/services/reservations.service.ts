@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReservationsEntity } from '../entities/reservations.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import {
+  DeleteResult,
+  FindOneOptions,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { ReservationDTO, ReservationUpdateDTO } from '../dto/reservation.dto';
 import { ErrorManager } from 'src/utils/error.manager';
 import { UsersReservationsEntity } from 'src/users/entities/usersReservations.entity';
@@ -16,7 +21,13 @@ export class ReservationsService {
     @InjectRepository(UsersReservationsEntity)
     private readonly userReservationRepository: Repository<UsersReservationsEntity>,
     private readonly usersService: UsersService,
-  ) { }
+  ) {}
+
+  public async findOne(
+    filter: FindOneOptions<ReservationsEntity>,
+  ): Promise<ReservationsEntity> {
+    return await this.reservationRepository.findOne(filter);
+  }
 
   public async createReservation(
     body: ReservationDTO,
@@ -24,7 +35,20 @@ export class ReservationsService {
   ): Promise<any> {
     try {
       const user = await this.usersService.findUsersById(userId);
+
+      const reservationExist = await this.findOne({
+        where: { date: body.date, hour: body.hour },
+      });
+      if (reservationExist) {
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message:
+            'Debes agregar una hora diferente mayor o menor al horario que estás agregando como minimo una hora de diferencia',
+        });
+      }
+
       const reservation = await this.reservationRepository.save(body);
+
       return await this.userReservationRepository.save({
         accessLevel: ACCESS_LEVEL.OWNER,
         user: user,
@@ -40,6 +64,7 @@ export class ReservationsService {
       const reservations: ReservationsEntity[] =
         await this.reservationRepository.find({
           relations: ['usersIncludes.user', 'earrings'],
+          order: { date: 'ASC', hour: 'ASC' },
         });
       if (reservations.length === 0) {
         throw new ErrorManager({
@@ -92,10 +117,10 @@ export class ReservationsService {
 
   public async deleteReservation(
     reservationId: string,
-    relationId: string
+    relationId: string,
   ): Promise<DeleteResult | undefined> {
     try {
-      await this.usersService.deleteRelation(relationId)
+      await this.usersService.deleteRelation(relationId);
 
       const reservation: DeleteResult =
         await this.reservationRepository.delete(reservationId);

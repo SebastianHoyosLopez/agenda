@@ -37,12 +37,13 @@ export class ReservationsController {
     return await this.reservationsService.createReservation(body, userId);
   }
 
-  @PublicAccess()
+  // @PublicAccess()
   @Get('all')
   public async findAllReservations() {
     return await this.reservationsService.findReservations();
   }
 
+  @PublicAccess()
   @ApiParam({
     name: 'reservationId',
   })
@@ -72,8 +73,11 @@ export class ReservationsController {
   @Delete('delete/:reservationId/:relationId')
   public async deleteUser(
     @Param('reservationId', new ParseUUIDPipe()) reservationId: string,
-    @Param('relationId', new ParseUUIDPipe()) relationId: string
+    @Param('relationId', new ParseUUIDPipe()) relationId: string,
   ) {
-    return await this.reservationsService.deleteReservation(reservationId, relationId);
+    return await this.reservationsService.deleteReservation(
+      reservationId,
+      relationId,
+    );
   }
 }

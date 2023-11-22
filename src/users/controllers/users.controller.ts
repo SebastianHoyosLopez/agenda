@@ -4,24 +4,22 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Post,
   Put,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { UserDTO, UserToReservationDTO, UserUpdateDTO } from '../dto/user.dto';
-import { PublicAccess } from 'src/auth/decorators/public.decorator';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { PublicAccess } from '../../auth/decorators/public.decorator';
+import { AuthGuard } from '../../auth/guards/auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
 import { ApiHeader, ApiParam, ApiTags } from '@nestjs/swagger';
-import { ReservationsEntity } from 'src/reservations/entities/reservations.entity';
 
 @ApiTags('Users')
 @Controller('users')
 @UseGuards(AuthGuard, RolesGuard)
 export class UsersController {
-  constructor(private usersService: UsersService) { }
+  constructor(private usersService: UsersService) {}
 
   @PublicAccess()
   @Post('register')
@@ -29,7 +27,7 @@ export class UsersController {
     return await this.usersService.createUser(body);
   }
 
-  @PublicAccess()
+  // @PublicAccess()
   @Get('all')
   public async findAllUsers() {
     return await this.usersService.findUsers();
@@ -38,7 +36,7 @@ export class UsersController {
   @PublicAccess()
   @Get('all-relations')
   public async findAllRelations() {
-    return await this.usersService.findRelations()
+    return await this.usersService.findRelations();
   }
 
   @ApiParam({
@@ -47,7 +45,7 @@ export class UsersController {
   @ApiHeader({
     name: 'agenda_token',
   })
-  @PublicAccess()
+  // @PublicAccess()
   @Get(':userId')
   public async findUserById(@Param('userId') userId: string) {
     return await this.usersService.findUsersById(userId);
@@ -59,7 +57,7 @@ export class UsersController {
   @Post('add-to-reservation')
   public async addToReservation(
     @Body() body: UserToReservationDTO,
-    @Param('reservationId', new ParseUUIDPipe()) reservationId: string,
+    // @Param('reservationId', new ParseUUIDPipe()) reservationId: string,
   ) {
     return await this.usersService.relationToReservation(body);
   }
@@ -94,7 +92,7 @@ export class UsersController {
   })
   @PublicAccess()
   @Delete('delete-relation/:relationId')
-  public async deleteRelation(@Param("relationId") relationId: string) {
-    return await this.usersService.deleteRelation(relationId)
+  public async deleteRelation(@Param('relationId') relationId: string) {
+    return await this.usersService.deleteRelation(relationId);
   }
 }
