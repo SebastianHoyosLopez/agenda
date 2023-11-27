@@ -4,6 +4,8 @@ import { ReservationsEntity } from '../entities/reservations.entity';
 import {
   DeleteResult,
   FindOneOptions,
+  MoreThan,
+  // MoreThan,
   Repository,
   UpdateResult,
 } from 'typeorm';
@@ -60,22 +62,39 @@ export class ReservationsService {
   }
 
   public async findReservations(): Promise<ReservationsEntity[]> {
-    try {
-      const reservations: ReservationsEntity[] =
-        await this.reservationRepository.find({
-          relations: ['usersIncludes.user', 'earrings'],
-          order: { date: 'ASC', hour: 'ASC' },
-        });
-      if (reservations.length === 0) {
-        throw new ErrorManager({
-          type: 'BAD_REQUEST',
-          message: 'No se encontro resultados',
-        });
-      }
-      return reservations;
-    } catch (error) {
-      throw ErrorManager.createSignatureError(error.message);
-    }
+    const currentDate = new Date();
+    const yesterday = new Date(currentDate);
+    yesterday.setDate(currentDate.getDate() - 1);
+
+    const reservations = await this.reservationRepository
+      .createQueryBuilder('reservations')
+      .leftJoinAndSelect('reservations.usersIncludes', 'usersIncludes')
+      .leftJoinAndSelect('usersIncludes.user', 'user')
+      .where({
+        date: MoreThan(yesterday.toISOString()),
+      })
+      .orderBy('date', 'ASC')
+      .addOrderBy('hour', 'ASC')
+      .getMany(); // <-- Ejecutar la consulta y obtener los resultados
+
+    return reservations;
+    // try {
+    //   const reservations: ReservationsEntity[] =
+    //     await this.reservationRepository.find({
+    //       relations: ['usersIncludes.user', 'earrings'],
+    //       order: { date: 'ASC', hour: 'ASC' },
+    //       where: { date: MoreThan(yesterday.toISOString()) },
+    //     });
+    //   if (reservations.length === 0) {
+    //     throw new ErrorManager({
+    //       type: 'BAD_REQUEST',
+    //       message: 'No se encontro resultados',
+    //     });
+    //   }
+    //   return reservations;
+    // } catch (error) {
+    //   throw ErrorManager.createSignatureError(error.message);
+    // }
   }
 
   public async findReservationsById(id: string): Promise<ReservationsEntity> {
