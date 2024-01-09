@@ -10,10 +10,10 @@ import {
   UpdateResult,
 } from 'typeorm';
 import { ReservationDTO, ReservationUpdateDTO } from '../dto/reservation.dto';
-import { ErrorManager } from 'src/utils/error.manager';
-import { UsersReservationsEntity } from 'src/users/entities/usersReservations.entity';
-import { UsersService } from 'src/users/services/users.service';
-import { ACCESS_LEVEL } from 'src/constants/roles';
+import { ErrorManager } from '../../utils/error.manager';
+import { UsersReservationsEntity } from '../../users/entities/usersReservations.entity';
+import { UsersService } from '../../users/services/users.service';
+import { ACCESS_LEVEL } from '../../constants/roles';
 
 @Injectable()
 export class ReservationsService {
@@ -104,7 +104,7 @@ export class ReservationsService {
         .where({ id })
         .leftJoinAndSelect('reservation.usersIncludes', 'usersIncludes')
         .leftJoinAndSelect('usersIncludes.user', 'user')
-        .leftJoinAndSelect('reservation.earrings', 'earrings')
+        // .leftJoinAndSelect('reservation.earrings', 'earrings')
         .getOne();
       if (!reservation) {
         throw new ErrorManager({

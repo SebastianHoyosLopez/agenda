@@ -11,12 +11,12 @@ export class ReservationDTO {
   @IsNotEmpty()
   @IsString()
   description: string;
-  
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   hour: string;
- 
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()

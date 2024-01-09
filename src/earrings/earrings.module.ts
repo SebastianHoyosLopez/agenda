@@ -3,8 +3,8 @@ import { EarringsService } from './services/earrings.service';
 import { EarringsController } from './controllers/earrings.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EarringsEntity } from './entities/earrings.entity';
-import { ReservationsEntity } from 'src/reservations/entities/reservations.entity';
-import { ReservationsService } from 'src/reservations/services/reservations.service';
+import { ReservationsEntity } from '../reservations/entities/reservations.entity';
+import { ReservationsService } from '../reservations/services/reservations.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([EarringsEntity, ReservationsEntity])],
