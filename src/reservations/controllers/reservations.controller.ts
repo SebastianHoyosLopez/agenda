@@ -7,10 +7,15 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ReservationsService } from '../services/reservations.service';
-import { ReservationDTO, ReservationUpdateDTO } from '../dto/reservation.dto';
+import {
+  FilterReservationsDto,
+  ReservationDTO,
+  ReservationUpdateDTO,
+} from '../dto/reservation.dto';
 import { AuthGuard } from '../../auth/guards/auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { AccessLevelGuard } from '../../auth/guards/access-level.guard';
@@ -41,6 +46,11 @@ export class ReservationsController {
   @Get('all')
   public async findAllReservations() {
     return await this.reservationsService.findReservations();
+  }
+
+  @Get('history')
+  async getRecordReservations(@Query() params: FilterReservationsDto) {
+    return await this.reservationsService.findRecord(params);
   }
 
   @PublicAccess()

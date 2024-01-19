@@ -4,12 +4,16 @@ import { ReservationsEntity } from '../entities/reservations.entity';
 import {
   DeleteResult,
   FindOneOptions,
-  MoreThan,
-  // MoreThan,
+  LessThanOrEqual,
+  MoreThanOrEqual,
   Repository,
   UpdateResult,
 } from 'typeorm';
-import { ReservationDTO, ReservationUpdateDTO } from '../dto/reservation.dto';
+import {
+  FilterReservationsDto,
+  ReservationDTO,
+  ReservationUpdateDTO,
+} from '../dto/reservation.dto';
 import { ErrorManager } from '../../utils/error.manager';
 import { UsersReservationsEntity } from '../../users/entities/usersReservations.entity';
 import { UsersService } from '../../users/services/users.service';
@@ -61,6 +65,23 @@ export class ReservationsService {
     }
   }
 
+  public async findRecord(params: FilterReservationsDto) {
+    const currentDate = new Date();
+    const yesterday = new Date(currentDate);
+    yesterday.setDate(currentDate.getDate() - 1);
+
+    if (params) {
+      const { limit, offset } = params;
+      return this.reservationRepository.find({
+        relations: ['usersIncludes.user'],
+        order: { date: 'DESC', hour: 'DESC' },
+        where: { date: LessThanOrEqual(yesterday.toISOString()) },
+        take: limit,
+        skip: offset,
+      });
+    }
+  }
+
   public async findReservations(): Promise<ReservationsEntity[]> {
     const currentDate = new Date();
     const yesterday = new Date(currentDate);
@@ -71,7 +92,7 @@ export class ReservationsService {
       .leftJoinAndSelect('reservations.usersIncludes', 'usersIncludes')
       .leftJoinAndSelect('usersIncludes.user', 'user')
       .where({
-        date: MoreThan(yesterday.toISOString()),
+        date: MoreThanOrEqual(yesterday.toISOString()),
       })
       .orderBy('date', 'ASC')
       .addOrderBy('hour', 'ASC')

@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class ReservationDTO {
   @ApiProperty()
@@ -43,4 +49,14 @@ export class ReservationUpdateDTO {
   @IsOptional()
   @IsString()
   place: string;
+}
+
+export class FilterReservationsDto {
+  @IsOptional()
+  @IsPositive()
+  limit: number;
+
+  @IsOptional()
+  @Min(0)
+  offset: number;
 }
