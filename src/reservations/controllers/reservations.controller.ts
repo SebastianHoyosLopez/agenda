@@ -42,7 +42,7 @@ export class ReservationsController {
     return await this.reservationsService.createReservation(body, userId);
   }
 
-  // @PublicAccess()
+  @PublicAccess()
   @Get('all')
   public async findAllReservations() {
     return await this.reservationsService.findReservations();
