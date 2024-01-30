@@ -1,11 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsPositive,
   IsString,
+  IsUUID,
   Min,
 } from 'class-validator';
+import { ReservationsEntity } from '../entities/reservations.entity';
+import { EarringsEntity } from 'src/earrings/entities/earrings.entity';
+import { ACCESS_LEVEL } from 'src/constants/roles';
 
 export class ReservationDTO {
   @ApiProperty()
@@ -49,6 +54,23 @@ export class ReservationUpdateDTO {
   @IsOptional()
   @IsString()
   place: string;
+}
+
+export class ReservationToEarringDTO {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID()
+  reservation: ReservationsEntity;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID()
+  earring: EarringsEntity;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEnum(ACCESS_LEVEL)
+  accessLevel: ACCESS_LEVEL;
 }
 
 export class FilterReservationsDto {

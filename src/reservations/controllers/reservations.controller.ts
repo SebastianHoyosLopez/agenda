@@ -14,6 +14,7 @@ import { ReservationsService } from '../services/reservations.service';
 import {
   FilterReservationsDto,
   ReservationDTO,
+  ReservationToEarringDTO,
   ReservationUpdateDTO,
 } from '../dto/reservation.dto';
 import { AuthGuard } from '../../auth/guards/auth.guard';
@@ -22,7 +23,7 @@ import { AccessLevelGuard } from '../../auth/guards/access-level.guard';
 import { AccessLevel } from '../../auth/decorators/access-level.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { PublicAccess } from '../../auth/decorators/public.decorator';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiParam, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Reservations')
 @Controller('reservations')
@@ -89,5 +90,12 @@ export class ReservationsController {
       reservationId,
       relationId,
     );
+  }
+  @ApiHeader({
+    name: 'agenda_token',
+  })
+  @Post('add-to-earring')
+  public async addToEarring(@Body() body: ReservationToEarringDTO) {
+    return await this.reservationsService.relationToEarring(body);
   }
 }

@@ -12,12 +12,14 @@ import {
 import {
   FilterReservationsDto,
   ReservationDTO,
+  ReservationToEarringDTO,
   ReservationUpdateDTO,
 } from '../dto/reservation.dto';
 import { ErrorManager } from '../../utils/error.manager';
 import { UsersReservationsEntity } from '../../users/entities/usersReservations.entity';
 import { UsersService } from '../../users/services/users.service';
 import { ACCESS_LEVEL } from '../../constants/roles';
+import { ReservationEarringsEntity } from '../entities/reservationEarrings.entity';
 
 @Injectable()
 export class ReservationsService {
@@ -27,6 +29,8 @@ export class ReservationsService {
     @InjectRepository(UsersReservationsEntity)
     private readonly userReservationRepository: Repository<UsersReservationsEntity>,
     private readonly usersService: UsersService,
+    @InjectRepository(ReservationEarringsEntity)
+    private readonly reservationEarringRepository: Repository<ReservationEarringsEntity>,
   ) {}
 
   public async findOne(
@@ -91,6 +95,8 @@ export class ReservationsService {
       .createQueryBuilder('reservations')
       .leftJoinAndSelect('reservations.usersIncludes', 'usersIncludes')
       .leftJoinAndSelect('usersIncludes.user', 'user')
+      .leftJoinAndSelect('reservations.earringsIncludes', 'earringsIncludes')
+      .leftJoinAndSelect('earringsIncludes.earring', 'earring')
       .where({
         date: MoreThanOrEqual(yesterday.toISOString()),
       })
@@ -125,7 +131,8 @@ export class ReservationsService {
         .where({ id })
         .leftJoinAndSelect('reservation.usersIncludes', 'usersIncludes')
         .leftJoinAndSelect('usersIncludes.user', 'user')
-        // .leftJoinAndSelect('reservation.earrings', 'earrings')
+        .leftJoinAndSelect('reservation.earringsIncludes', 'earringsIncludes')
+        .leftJoinAndSelect('earringsIncludes.earring', 'earring')
         .getOne();
       if (!reservation) {
         throw new ErrorManager({
@@ -172,6 +179,14 @@ export class ReservationsService {
         });
       }
       return reservation;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
+
+  public async relationToEarring(body: ReservationToEarringDTO) {
+    try {
+      return await this.reservationEarringRepository.save(body);
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }

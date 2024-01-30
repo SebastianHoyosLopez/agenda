@@ -5,9 +5,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EarringsEntity } from './entities/earrings.entity';
 import { ReservationsEntity } from '../reservations/entities/reservations.entity';
 import { ReservationsService } from '../reservations/services/reservations.service';
+import { ReservationEarringsEntity } from 'src/reservations/entities/reservationEarrings.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([EarringsEntity, ReservationsEntity])],
+  imports: [
+    TypeOrmModule.forFeature([
+      EarringsEntity,
+      ReservationsEntity,
+      ReservationEarringsEntity,
+    ]),
+  ],
   providers: [EarringsService, ReservationsService],
   controllers: [EarringsController],
 })

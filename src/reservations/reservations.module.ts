@@ -5,10 +5,15 @@ import { ReservationsEntity } from './entities/reservations.entity';
 import { ReservationsController } from './controllers/reservations.controller';
 import { UsersReservationsEntity } from '../users/entities/usersReservations.entity';
 import { UsersService } from '../users/services/users.service';
+import { ReservationEarringsEntity } from './entities/reservationEarrings.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ReservationsEntity, UsersReservationsEntity]),
+    TypeOrmModule.forFeature([
+      ReservationEarringsEntity,
+      ReservationsEntity,
+      UsersReservationsEntity,
+    ]),
   ],
   controllers: [ReservationsController],
   providers: [ReservationsService, UsersService],
