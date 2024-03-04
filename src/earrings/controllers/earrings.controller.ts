@@ -6,7 +6,7 @@ import { RolesGuard } from '../../auth/guards/roles.guard';
 import { AccessLevelGuard } from '../../auth/guards/access-level.guard';
 import { AccessLevel } from '../../auth/decorators/access-level.decorator';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
-import { PublicAccess } from 'src/auth/decorators/public.decorator';
+import { PublicAccess } from '../../auth/decorators/public.decorator';
 
 @ApiTags('Earrings')
 @Controller('earrings')

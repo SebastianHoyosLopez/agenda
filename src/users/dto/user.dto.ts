@@ -5,9 +5,9 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { ACCESS_LEVEL, ROLES } from 'src/constants/roles';
+import { ACCESS_LEVEL, ROLES } from '../../constants/roles';
 import { UsersEntity } from '../entities/users.entity';
-import { ReservationsEntity } from 'src/reservations/entities/reservations.entity';
+import { ReservationsEntity } from '../../reservations/entities/reservations.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UserDTO {

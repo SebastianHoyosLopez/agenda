@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
 import { DataSourceConfig } from './config/data.source';
 import { ReservationsModule } from './reservations/reservations.module';
 import { AuthModule } from './auth/auth.module';
 import { EarringsModule } from './earrings/earrings.module';
 // import { DevtoolsModule } from '@nestjs/devtools-integration';
+import { FinanceManagementModule } from './finance-management/finance-management.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { EarringsModule } from './earrings/earrings.module';
     ReservationsModule,
     AuthModule,
     EarringsModule,
+    FinanceManagementModule,
   ],
 })
 export class AppModule {}

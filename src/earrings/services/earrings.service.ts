@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EarringsEntity } from '../entities/earrings.entity';
 import { Repository } from 'typeorm';
+import { EarringsEntity } from '../entities/earrings.entity';
 import { ReservationsService } from '../../reservations/services/reservations.service';
 import { EarringsDTO } from '../dto/earrings.dto';
-import { ErrorManager } from 'src/utils/error.manager';
-import { ReservationEarringsEntity } from 'src/reservations/entities/reservationEarrings.entity';
-import { ACCESS_LEVEL } from 'src/constants/roles';
+import { ErrorManager } from '../../utils/error.manager';
+import { ReservationEarringsEntity } from '../../reservations/entities/reservationEarrings.entity';
+import { ACCESS_LEVEL } from '../../constants/roles';
 
 @Injectable()
 export class EarringsService {

@@ -1,8 +1,9 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../config/base.entity';
 import { IReservation } from '../../interfaces/reservations.interface';
 import { UsersReservationsEntity } from '../../users/entities/usersReservations.entity';
 import { ReservationEarringsEntity } from './reservationEarrings.entity';
+import { ReservationFinancesEntity } from './reservationFinances.entity';
 
 @Entity({ name: 'reservations' })
 export class ReservationsEntity extends BaseEntity implements IReservation {
@@ -29,4 +30,10 @@ export class ReservationsEntity extends BaseEntity implements IReservation {
     (reservationsEarring) => reservationsEarring.reservation,
   )
   earringsIncludes: ReservationEarringsEntity[];
+
+  @OneToOne(
+    () => ReservationFinancesEntity,
+    (reservationFinance) => reservationFinance.reservation,
+  )
+  financeInclude: ReservationFinancesEntity;
 }

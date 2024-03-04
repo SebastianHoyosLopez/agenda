@@ -11,9 +11,9 @@ import {
   ADMIN_KEY,
   PUBLIC_KEY,
   ROLES_KEY,
-} from 'src/constants/key-decorators';
-import { ROLES, ACCESS_LEVEL } from 'src/constants/roles';
-import { UsersService } from 'src/users/services/users.service';
+} from '../../constants/key-decorators';
+import { ROLES, ACCESS_LEVEL } from '../../constants/roles';
+import { UsersService } from '../../users/services/users.service';
 
 @Injectable()
 export class AccessLevelGuard implements CanActivate {

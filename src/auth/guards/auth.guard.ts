@@ -4,9 +4,9 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PUBLIC_KEY } from 'src/constants/key-decorators';
-import { UsersService } from 'src/users/services/users.service';
-import { useToken } from 'src/utils/use.token';
+import { PUBLIC_KEY } from '../../constants/key-decorators';
+import { UsersService } from '../../users/services/users.service';
+import { useToken } from '../../utils/use.token';
 import { IUseToken } from '../interfaces/auth.interface';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';

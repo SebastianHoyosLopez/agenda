@@ -9,8 +9,8 @@ import {
   Min,
 } from 'class-validator';
 import { ReservationsEntity } from '../entities/reservations.entity';
-import { EarringsEntity } from 'src/earrings/entities/earrings.entity';
-import { ACCESS_LEVEL } from 'src/constants/roles';
+import { EarringsEntity } from '../../earrings/entities/earrings.entity';
+import { ACCESS_LEVEL } from '../../constants/roles';
 
 export class ReservationDTO {
   @ApiProperty()
